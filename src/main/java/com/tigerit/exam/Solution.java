@@ -24,7 +24,9 @@ public class Solution implements Runnable {
         //printLine(integer);
 
         Integer cases, casesIter, nTable, nTableIter, nRowIter, nColumnIter, nQuery, nQueryIter, queryLineIter;
+        Integer matchingFromColumnIndex, matchingJoinColumnIndex;
         Integer inputMatrix[][][] = new Integer[11][101][101];
+        boolean printCol;
 
         int FROMTableIndex, JOINTableIndex;
 
@@ -45,6 +47,8 @@ public class Solution implements Runnable {
         casesIter = 0;
 
         while(casesIter < cases) {
+
+            printLine("Test: " + (casesIter+1));
 
             // Taking table input
             nTable = readLineAsInteger();
@@ -114,73 +118,76 @@ public class Solution implements Runnable {
                 FROMTableIndex = getStringListIndexOf(tableNamesForSql, nTable, FROMTableName);
                 JOINTableIndex = getStringListIndexOf(tableNamesForSql, nTable, JOINTableName);
 
+                matchingFromColumnIndex = getStringListIndexOf(columnNames[FROMTableIndex], nColumn[FROMTableIndex], conditions[0][1]);
+                matchingJoinColumnIndex = getStringListIndexOf(columnNames[JOINTableIndex], nColumn[JOINTableIndex], conditions[1][1]);
+
+
+
+                for(int k=0; k < nColumn[FROMTableIndex]; k++) {
+
+                    if(SELECTColumnName.length == 0){
+                        System.out.print(columnNames[FROMTableIndex][k] + " ");
+                    } else {
+                        for(int printI=0; printI < SELECTColumnName.length; printI++) {
+                            if(SELECTColumnName[printI].equals(columnNames[FROMTableIndex][k])) {
+                                System.out.print(columnNames[FROMTableIndex][k] + " ");
+                                break;
+                            }
+                        }
+                    }
+                }
+                for(int k=0; k < nColumn[JOINTableIndex]; k++) {
+                    if(SELECTColumnName.length == 0){
+                        System.out.print(columnNames[JOINTableIndex][k] + " ");
+                    } else {
+                        for(int printI=0; printI < SELECTColumnName.length; printI++) {
+                            if(SELECTColumnName[printI].equals(columnNames[JOINTableIndex][k])) {
+                                System.out.print(columnNames[JOINTableIndex][k] + " ");
+                                break;
+                            }
+                        }
+                    }
+                }
+                printLine(" ");
+
                 for(int i=0; i < nRow[FROMTableIndex]; i++) {
                     for(int j=0; j < nRow[JOINTableIndex]; j++) {
-                        for(int k=0; k < nColumn[FROMTableIndex]; k++) {
-                            System.out.print(inputMatrix[i][j][k] + " ");
+
+                        if(inputMatrix[FROMTableIndex][i][matchingFromColumnIndex] == inputMatrix[JOINTableIndex][j][matchingJoinColumnIndex]) {
+                            for(int k=0; k < nColumn[FROMTableIndex]; k++) {
+
+                                if(SELECTColumnName.length == 0){
+                                    System.out.print(inputMatrix[FROMTableIndex][i][k] + " ");
+                                } else {
+                                    for(int printI=0; printI < SELECTColumnName.length; printI++) {
+                                        if(SELECTColumnName[printI].equals(columnNames[FROMTableIndex][k])) {
+                                            System.out.print(inputMatrix[FROMTableIndex][i][k] + " ");
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            for(int k=0; k < nColumn[JOINTableIndex]; k++) {
+                                if(SELECTColumnName.length == 0){
+                                    System.out.print(inputMatrix[JOINTableIndex][j][k] + " ");
+                                } else {
+                                    for(int printI=0; printI < SELECTColumnName.length; printI++) {
+                                        if(SELECTColumnName[printI].equals(columnNames[JOINTableIndex][k])) {
+                                            System.out.print(inputMatrix[JOINTableIndex][j][k] + " ");
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            printLine(" ");
                         }
-                        for(int k=0; k < nColumn[JOINTableIndex]; k++) {
-                            System.out.print(inputMatrix[i][j][k] + " ");
-                        }
-                        printLine(" ");
                     }
-                    printLine(" ");
                 }
+                printLine(" ");
 
                 readLine(); // skipping blank line
                 nQueryIter++;
             }
-
-
-
-
-
-
-            // Data displaying
-//            nTableIter = 0;
-//            while(nTableIter < nTable) {
-//                printLine(tableNames[nTableIter]);
-//                printLine(nColumn[nTableIter]);
-//                printLine(nRow[nTableIter]);
-//
-//                nColumnIter = 0;
-//                String printingColumnNames = "";
-//                while(nColumnIter < nColumn[nTableIter]) {
-//                    printingColumnNames = printingColumnNames + columnNames[nTableIter][nColumnIter] + " ";
-//                    nColumnIter++;
-//                }
-//                printLine(printingColumnNames);
-//
-//                nRowIter = 0;
-//                String printingRecords = "";
-//                while(nRowIter < nRow[nTableIter]) {
-//                    printingRecords = "";
-//                    nColumnIter = 0;
-//                    while(nColumnIter < nColumn[nTableIter]) {
-//                        printingRecords += Float.toString(inputMatrix[nTableIter][nRowIter][nColumnIter]) + " ";
-//                        nColumnIter++;
-//                    }
-//                    printLine(printingRecords);
-//                    nRowIter++;
-//                }
-//
-//                nTableIter++;
-//            }
-//            printLine(nQuery);
-//
-//            nQueryIter = 0;
-//            while(nQueryIter < nQuery) {
-//                printLine(queryLines[nQueryIter][0] + " " +
-//                          queryLines[nQueryIter][1] + " " +
-//                          queryLines[nQueryIter][2] + " " +
-//                          queryLines[nQueryIter][3]);
-//                nQueryIter++;
-//            }
-            // Data displaying
-
-
-
-
             casesIter++;
         }
     }
@@ -191,6 +198,9 @@ public class Solution implements Runnable {
             return new String[0];
         }
         String[] inputParts = input.split(", ");
+        for(int i=0; i < inputParts.length; i++) {
+            inputParts[i] = inputParts[i].split("\\.")[1];
+        }
         return inputParts;
     }
 
