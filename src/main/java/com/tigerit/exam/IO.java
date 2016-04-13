@@ -27,6 +27,32 @@ public class IO {
         return value;
     }
 
+    public static String[] readStrings() {
+        return readLine().split(" ");
+    }
+
+    public static Integer[] readInts() {
+        String numberStrings[] = readLine().split(" ");
+        Integer ints[] = new Integer[numberStrings.length];
+        int i = 0;
+        while (i < numberStrings.length) {
+            ints[i] = Integer.parseInt(numberStrings[i]);
+            i++;
+        }
+        return ints;
+    }
+
+    public static Float[] readFloats() {
+        String floatStrings[] = readLine().split(" ");
+        Float floats[] = new Float[floatStrings.length];
+        int i = 0;
+        while(i < floatStrings.length) {
+            floats[i] = Float.parseFloat(floatStrings[i]);
+            i++;
+        }
+        return floats;
+    }
+
     public static Integer readLineAsInteger() {
         return Integer.parseInt(readLine());
     }
